@@ -1,7 +1,7 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import { buttonVariants } from '@/components/ui/button'
 import { UserButton } from '@clerk/nextjs'
-import { ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
@@ -31,10 +31,9 @@ const Home = () => {
           href='/dashboard'
           target='_blank'>
           הצטרף לרשימת ההמתנה{' '}
-          <ArrowRight className='ml-2 h-5 w-5' />
+          <ArrowLeft className='ml-2 h-5 w-5' />
         </Link>
       </MaxWidthWrapper>
-      <UserButton afterSignOutUrl='/' />
 
       {/* value proposition section */}
       <div>
