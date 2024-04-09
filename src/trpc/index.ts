@@ -16,6 +16,11 @@ import {
 import { PLANS } from '@/config/stripe'
 
 export const appRouter = router({
+  test: publicProcedure.query(async () => {
+
+    return { success: true }
+  }),
+  
   authCallback: publicProcedure.query(async () => {
     const { getUser } = getKindeServerSession()
     const user = getUser()

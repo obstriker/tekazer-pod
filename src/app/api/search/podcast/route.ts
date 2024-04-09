@@ -14,9 +14,14 @@ interface Podcast{
 
 export async function searchPodcast(q: string)
 {
+  if(q.length < 3)
+  {
+    return {}
+  }
+  
   const apiHeaderTime = Math.floor(Date.now() / 1000).toString(); // Time in seconds
   // Hash them to get the Authorization token
-  const hash = sha1(process.env.PODCASTINDEX_KEY + process.env.PODCASTINDEX_SECRET + apiHeaderTime);
+  const hash = sha1(process.env.PODCASTINDEX_KEY! + process.env.PODCASTINDEX_SECRET! + apiHeaderTime);
   // Set the required headers
   const headers = {
     "User-Agent": "Chrome/94.0.4606.81",
@@ -37,26 +42,45 @@ export async function searchPodcast(q: string)
     }
   }
 
+  // insert queries to db for faster results
+
   // Call the fetchData function
-  return await fetchData(q);
+  let res = await fetchData(q);
+
+  if (res)
+  {
+    return res
+  }
+  else {
+    return []
+  }
 }
 
 export async function GET(
   request: NextRequest,
   { params }: any
 ) {
-  const search_term = request.nextUrl.searchParams.get("q") ? request.nextUrl.searchParams.get("q") : "";
-
+  const search_term = request.nextUrl.searchParams.get("q") ?? "";
+  let podcastArray: Podcast[] = []
   const res = await searchPodcast(search_term);
-  const podcastArray: Podcast[] = res["feeds"].map((item: any) => {
-    // Map each item to a podcast object
-    return {
-      title: item.title, // Replace 'title' with the actual property name in your JSON object
-      rss: item.originalUrl, // Replace 'author' with the actual property name in your JSON object
-      image: item.image
-      //description: item.description
-      // Add more properties as needed
-    };
-  });
+  try {
+    if (Object.keys(res).length > 0)
+    {
+      podcastArray = res["feeds"].map((item: any) => {
+        // Map each item to a podcast object
+        return {
+          title: item.title, // Replace 'title' with the actual property name in your JSON object
+          rss: item.originalUrl, // Replace 'author' with the actual property name in your JSON object
+          image: item.image
+          //description: item.description
+          // Add more properties as needed
+        };
+      });
+    }
+  }
+  catch(error) {
+    console.error('Error mapping podcast:', error);
+  }
+
   return Response.json(podcastArray)
 }
