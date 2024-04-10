@@ -31,7 +31,8 @@ const renderList = (props: any, option: any) => (
 
 const renderTagBox = (tags: any, getTagProps: any) => (
     tags.map((item: any, index: any) => (
-            <Chip
+            <Chip 
+                key={item.id}
                 variant="outlined"
                 color="primary"
                 endDecorator={<Close />}

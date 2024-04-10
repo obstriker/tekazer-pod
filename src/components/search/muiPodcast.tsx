@@ -22,7 +22,6 @@ const renderList = (props: any, option: any) => (
         <Image
           loading="lazy"
           width="50"
-          srcSet={option.image}
           src={option.image}
           className='rounded-full'
           alt=""
@@ -37,6 +36,7 @@ const renderList = (props: any, option: any) => (
 const renderTagBox = (tags: any, getTagProps: any) => (
     tags.map((item: any, index: any) => (
             <Chip
+                key={item.id}
                 variant="outlined"
                 color="primary"
                 endDecorator={<Close />}
