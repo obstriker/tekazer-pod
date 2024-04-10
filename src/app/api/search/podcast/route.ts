@@ -12,7 +12,7 @@ interface Podcast{
   description?: string
 }
 
-export async function searchPodcast(q: string)
+async function searchPodcast(q: string)
 {
   if(q.length < 3)
   {
@@ -56,7 +56,7 @@ export async function searchPodcast(q: string)
   }
 }
 
-export async function GET(
+const handler = async function GET(
   request: NextRequest,
   { params }: any
 ) {
@@ -84,3 +84,5 @@ export async function GET(
 
   return Response.json(podcastArray)
 }
+
+export {handler as GET, handler as POST}

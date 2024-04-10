@@ -53,7 +53,7 @@ const BillingForm = ({
             <CardTitle>Subscription Plan</CardTitle>
             <CardDescription>
               You are currently on the{' '}
-              <strong>{subscriptionPlan.name}</strong> plan.
+              <strong>{subscriptionPlan.isSubscribed} Changed to allow deployment</strong> plan.
             </CardDescription>
           </CardHeader>
 
