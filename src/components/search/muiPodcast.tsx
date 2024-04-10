@@ -6,6 +6,7 @@ import Close from '@mui/icons-material/Close';
 import {ListItemDecorator, ListItemContent, AutocompleteOption, Autocomplete} from '@mui/joy';
 import { useState, useEffect } from 'react';
 import { Avatar, Stack } from '@mui/material';
+import Image from 'next/image'
 
 interface SubmitSectionProps {
   handleRssSubmit: (rssUrl: string) => void
@@ -18,7 +19,7 @@ const renderList = (props: any, option: any) => (
         },
       }}>
       <ListItemDecorator>
-        <img
+        <Image
           loading="lazy"
           width="50"
           srcSet={option.image}

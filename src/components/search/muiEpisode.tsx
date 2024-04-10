@@ -6,6 +6,7 @@ import Close from '@mui/icons-material/Close';
 import {ListItemDecorator, ListItemContent, AutocompleteOption, Autocomplete} from '@mui/joy';
 import { useState, useEffect } from 'react';
 import { Avatar, Stack } from '@mui/material';
+import Image from 'next/image'
 
 const renderList = (props: any, option: any) => (
     <AutocompleteOption {...props}   slotProps={{
@@ -14,10 +15,9 @@ const renderList = (props: any, option: any) => (
         },
       }}>
       <ListItemDecorator>
-        <img
+        <Image
           loading="lazy"
-          width="50"
-          srcSet={option.image}
+          width={50}
           src={option.image}
           className='rounded-full'
           alt=""
