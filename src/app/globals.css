@@ -91,3 +91,8 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+.gradient {
+  background-image: radial-gradient(ellipse 100% 100% at 0 100%, rgba(119, 232, 208, .15), rgba(232, 119, 175, 0));
+  background-image: radial-gradient(ellipse 40% 100% at 60% -10%, rgba(119, 138, 232, .3), rgba(119, 138, 232, 0));
+}

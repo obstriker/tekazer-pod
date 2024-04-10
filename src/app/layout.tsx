@@ -23,7 +23,7 @@ export default function RootLayout({
       <Providers>
         <body
           className={cn(
-            'min-h-screen font-sans antialiased grainy',
+            'min-h-screen font-sans antialiased bg-[#0a0f20] text-white gradient',
             inter.className
           )}>
           <Toaster />
