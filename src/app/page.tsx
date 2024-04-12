@@ -8,6 +8,11 @@ import Pricing from '@/components/Pricing'
 import Section from '@/components/Section'
 
 export default function Home() {
+  const items = [
+    { text: 'Easy Uploads' },
+    { text: 'Automatic Autofit' },
+    // Add more items as needed
+  ];
   return (
     <>
       <MaxWidthWrapper className='mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center'>
@@ -43,7 +48,13 @@ export default function Home() {
         <div className='relative isolate'>
         <SpotifySearch />
         <Pricing />
-        <Section/>
+        <Section
+      title="Branding"
+      subtitle="Brand Your Landing Page"
+      description="Your landing page should reflect the aesthetic, the design and the energy of the brand you've already created. With NextJs, you can customize the page's details to create a truly unique page that refines your look and feel. We make designing and launching easy, no matter what your product is."
+      items={items}
+      imageUrl="https://images.pexels.com/photos/5973959/pexels-photo-5973959.jpeg?auto=compress&cs=tinysrgb&w=600x"
+    />
           <div
             aria-hidden='true'
             className='pointer-events-none absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80'>
