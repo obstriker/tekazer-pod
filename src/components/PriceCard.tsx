@@ -10,16 +10,30 @@ interface Plan {
 
 
   const PriceCard= ({plan}: any) => {
-    return (        
-      <div data-cy="subscription-plan" className="relative flex w-full flex-col justify-between space-y-6 rounded-xl p-6 lg:w-4/12 xl:p-8 2xl:w-3/12 xl:max-w-xs border-gray-100 dark:border-dark-900 border-2 bg-white bg-opacity-60">
+    function planNote(note:string){
+      if (note){
+        return (
+          <div className="rounded-md py-1 px-2 text-xs font-medium flex space-x-1 bg-gray-50 text-gray-500 dark:text-gray-800">
+              {plan.note}
+          </div>
+          )    
+      }
+      else
+      {
+        return ("")
+      }
+    }
+    return (
+      <div data-cy="subscription-plan" className="
+      relative flex flex-col justify-between space-y-6 rounded-xl
+      p-6 lg:w-4/12 xl:p-8 2xl:w-3/12 xl:max-w-xs
+    border-gray-100 dark:border-dark-900 border-2">
         <div className="flex flex-col space-y-2.5">
           <div className="flex items-center space-x-6">
             <h3 className="font-heading scroll-m-20 text-2xl font-semibold tracking-tight">
               <b className="font-semibold">{plan.name}</b>
             </h3>
-            <div className="rounded-md py-1 px-2 text-xs font-medium flex space-x-1 bg-gray-50 text-gray-500 dark:text-gray-800">
-              {plan.note}
-            </div>
+            {planNote(plan.note)}
           </div>
           <span className="text-sm text-gray-500 dark:text-gray-400">{plan.description}</span>
         </div>

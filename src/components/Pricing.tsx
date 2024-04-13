@@ -4,10 +4,8 @@ import { PLANS } from '@/config/stripe'
 
 const Pricing = () => {
   return (
-        <div className="flex flex-col space-y-12">
-        <div className="flex justify-center">
-            </div>
-            <div className="flex flex-col items-start space-y-6 lg:space-y-0 justify-center lg:flex-row lg:space-x-4">
+        <div className="flex flex-col justify-center py-16 space-y-16">
+            <div className="flex flex-col items-center space-y-6 lg:space-y-0 justify-center lg:flex-row lg:space-x-4">
                 <PriceCard plan={PLANS[0]} />
                 <PriceCard plan={PLANS[1]} />
                 <PriceCard plan={PLANS[2]} />

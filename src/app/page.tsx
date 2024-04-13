@@ -45,6 +45,21 @@ export default function Home() {
             </div>
       </MaxWidthWrapper>
 
+      <FeatureSection
+            title="Branding"
+            subtitle="Brand Your Landing Page"
+            description="Your landing page should reflect the aesthetic, the design and the energy of the brand you've already created. With NextJs, you can customize the page's details to create a truly unique page that refines your look and feel. We make designing and launching easy, no matter what your product is."
+            items={items}
+            imageUrl="https://images.pexels.com/photos/5973959/pexels-photo-5973959.jpeg?auto=compress&cs=tinysrgb&w=600x"
+            direction="right" />
+
+<FeatureSection
+            title="Branding"
+            subtitle="Brand Your Landing Page"
+            description="Your landing page should reflect the aesthetic, the design and the energy of the brand you've already created. With NextJs, you can customize the page's details to create a truly unique page that refines your look and feel. We make designing and launching easy, no matter what your product is."
+            items={items}
+            imageUrl="https://images.pexels.com/photos/5973959/pexels-photo-5973959.jpeg?auto=compress&cs=tinysrgb&w=600x"
+            direction="left" />
 
       <div className="h-[250px]"></div>
       {/* value proposition section */}
@@ -74,13 +89,6 @@ export default function Home() {
         <br/><br/><br/><br/><br/><br/>
         <SpotifySearch />
         <Pricing />
-        <FeatureSection
-            title="Branding"
-            subtitle="Brand Your Landing Page"
-            description="Your landing page should reflect the aesthetic, the design and the energy of the brand you've already created. With NextJs, you can customize the page's details to create a truly unique page that refines your look and feel. We make designing and launching easy, no matter what your product is."
-            items={items}
-            imageUrl="https://images.pexels.com/photos/5973959/pexels-photo-5973959.jpeg?auto=compress&cs=tinysrgb&w=600x"
-            direction="right" />
           <div
             aria-hidden='true'
             className='pointer-events-none absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80'>
