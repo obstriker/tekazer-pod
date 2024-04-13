@@ -22,6 +22,7 @@ const renderList = (props: any, option: any) => (
         <Image
           loading="lazy"
           width="50"
+          height="50"
           src={option.image}
           className='rounded-full'
           alt=""

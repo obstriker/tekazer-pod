@@ -8,6 +8,8 @@ import Pricing from '@/components/Pricing'
 import FeatureSection from '@/components/FeatureSection'
 import MainFeatureSection from '@/components/MainFeatureSection'
 import { Button, Typography } from '@mui/material'
+import PodPopup from '@/components/PodPopup'
+import Moda from '@/components/Moda'
 
 export default function Home() {
   const items = [
@@ -31,8 +33,8 @@ export default function Home() {
           Pod3 allows you to summarize, highlight and extract the most important information while saving you time listening to them.
         </p>
 
-        <div className='w-full pt-5 '>
-            <Button className='coloredButton py-2 px-5'>
+        <div className='w-full pt-5'>
+            <Button className='coloredButton py-2 px-10'>
             <Typography sx={{ color: "White", fontFamily: "nova"}} fontWeight={500} variant="h6">
               Get started
             </Typography>
@@ -43,7 +45,7 @@ export default function Home() {
                 <img alt="" src="http://localhost:3000/_next/image?url=%2Fdashboard-preview.jpg&w=1920&q=100" decoding="async" data-nimg="1" className="inline-block color-transparent" loading="lazy" />
               </div>
             </div>
-      </MaxWidthWrapper>
+      </MaxWidthWrapper>    
 
       <FeatureSection
             title="Branding"
@@ -85,6 +87,7 @@ export default function Home() {
         </div>
         </MaxWidthWrapper>
 
+        <Moda />
 
         <br/><br/><br/><br/><br/><br/>
         <SpotifySearch />
