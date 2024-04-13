@@ -96,3 +96,27 @@
   background-image: radial-gradient(ellipse 100% 100% at 0 100%, rgba(119, 232, 208, .15), rgba(232, 119, 175, 0));
   background-image: radial-gradient(ellipse 40% 100% at 60% -10%, rgba(119, 138, 232, .3), rgba(119, 138, 232, 0));
 }
+
+.coloredButton {
+  background: linear-gradient(90deg, rgb(131, 46, 255) 0%, rgb(254, 79, 242) 110%);
+  //width: 170.345px;
+  //height: 50px;
+  font-weight: 600;
+  font-family: 'nova';
+  //text-transform: initial !important;
+  text-color: black;
+  //transform-origin: 0px 0px;
+  //transform: scale(0.245991, 0.245991);
+  border-radius: 0.5rem;
+  font-family: "nova";
+}
+
+@font-face {
+  font-family: 'nova';
+  src: local('nova'), url("/fonts/ProximaNovaCond-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'trend-sans';
+  src: local('trend-sans'), url("/fonts/FontsFree-Net-Trend-Sans-W00-Five.ttf") format('truetype');
+}

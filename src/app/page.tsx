@@ -5,7 +5,9 @@ import { buttonVariants } from '@/components/ui/button'
 import Image from 'next/image'
 import SpotifySearch from '@/components/SpotifySearch'
 import Pricing from '@/components/Pricing'
-import Section from '@/components/Section'
+import FeatureSection from '@/components/FeatureSection'
+import MainFeatureSection from '@/components/MainFeatureSection'
+import { Button, Typography } from '@mui/material'
 
 export default function Home() {
   const items = [
@@ -15,7 +17,7 @@ export default function Home() {
   ];
   return (
     <>
-      <MaxWidthWrapper className='mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center'>
+      <MaxWidthWrapper className='mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center md:mt-60'>
         <div className='mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50'>
           <p className='text-sm font-semibold text-gray-700'>
             Pod3 is now public!
@@ -29,32 +31,56 @@ export default function Home() {
           Pod3 allows you to summarize, highlight and extract the most important information while saving you time listening to them.
         </p>
 
-        <Link
-          className={buttonVariants({
-            size: 'lg',
-            className: 'mt-5',
-          })}
-          href='/dashboard'
-          target='_blank'>
-          Get started{' '}
-          <ArrowRight className='ml-2 h-5 w-5' />
-        </Link>
+        <div className='w-full pt-5 '>
+            <Button className='coloredButton py-2 px-5'>
+            <Typography sx={{ color: "White", fontFamily: "nova"}} fontWeight={500} variant="h6">
+              Get started
+            </Typography>
+            </Button>
+          </div>
+          <div className="rounded-lg  px-20 py-10 bg-gradient-to-r from-indigo-600 to-red-600 mt-40">
+              <div className="relative overflow-hidden rounded-lg border-neutral-800 border flex justify-center">
+                <img alt="" src="http://localhost:3000/_next/image?url=%2Fdashboard-preview.jpg&w=1920&q=100" decoding="async" data-nimg="1" className="inline-block color-transparent" loading="lazy" />
+              </div>
+            </div>
       </MaxWidthWrapper>
 
 
-
+      <div className="h-[250px]"></div>
       {/* value proposition section */}
       <div>
         <div className='relative isolate'>
+          
+        <MaxWidthWrapper className='text-center items-center flex-col'>
+          <div className="items-center flex justify-center">
+            <h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl font-['trend-sans']">
+              Unlock insights <span className='text-green-600'>Instantly</span>
+            </h1>
+          </div>
+
+
+          <div className='w-full justify-center items-center flex pt-[15rem]'>
+            <div className="justify-center w-5/6">
+            <div className="rounded-lg  px-20 py-10 bg-gradient-to-r from-indigo-600 to-red-600">
+              <div className="relative overflow-hidden rounded-lg border-neutral-800 border flex justify-center">
+                <img alt="" src="http://localhost:3000/_next/image?url=%2Fdashboard-preview.jpg&w=1920&q=100" decoding="async" data-nimg="1" className="inline-block color-transparent" loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </div>
+        </MaxWidthWrapper>
+
+
+        <br/><br/><br/><br/><br/><br/>
         <SpotifySearch />
         <Pricing />
-        <Section
-      title="Branding"
-      subtitle="Brand Your Landing Page"
-      description="Your landing page should reflect the aesthetic, the design and the energy of the brand you've already created. With NextJs, you can customize the page's details to create a truly unique page that refines your look and feel. We make designing and launching easy, no matter what your product is."
-      items={items}
-      imageUrl="https://images.pexels.com/photos/5973959/pexels-photo-5973959.jpeg?auto=compress&cs=tinysrgb&w=600x"
-    />
+        <FeatureSection
+            title="Branding"
+            subtitle="Brand Your Landing Page"
+            description="Your landing page should reflect the aesthetic, the design and the energy of the brand you've already created. With NextJs, you can customize the page's details to create a truly unique page that refines your look and feel. We make designing and launching easy, no matter what your product is."
+            items={items}
+            imageUrl="https://images.pexels.com/photos/5973959/pexels-photo-5973959.jpeg?auto=compress&cs=tinysrgb&w=600x"
+            direction="right" />
           <div
             aria-hidden='true'
             className='pointer-events-none absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80'>
