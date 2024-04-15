@@ -15,6 +15,7 @@ import { format } from 'date-fns'
 import { Button } from './ui/button'
 import { useState } from 'react'
 import { getUserSubscriptionPlan } from '@/lib/stripe'
+import PodPopup from './PodPopup'
 
 interface PageProps {
   subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>
@@ -50,6 +51,7 @@ const Dashboard = ({subscriptionPlan}: PageProps) => {
         </h1>
 
         <UploadButton isSubscribed={subscriptionPlan.isSubscribed} />
+        <PodPopup/>
         
       </div>
 

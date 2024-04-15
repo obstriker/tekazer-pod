@@ -1,15 +1,9 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
-import { buttonVariants } from '@/components/ui/button'
 import Image from 'next/image'
-import SpotifySearch from '@/components/SpotifySearch'
 import Pricing from '@/components/Pricing'
 import FeatureSection from '@/components/FeatureSection'
-import MainFeatureSection from '@/components/MainFeatureSection'
 import { Button, Typography } from '@mui/material'
-import PodPopup from '@/components/PodPopup'
-import Moda from '@/components/Moda'
 
 export default function Home() {
   const items = [
@@ -26,7 +20,7 @@ export default function Home() {
           </p>
         </div>
         <h1 className='max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl'>
-          <span className='text-green-600'>Summarize</span>{' '}
+          <span className='bg-gradient-to-r from-indigo-600 to-pink-400 inline-block text-transparent bg-clip-text'>Summarize</span>{' '}
           your podcast and {' '} save time.
         </h1>
         <p className='mt-5 max-w-prose text-zinc-700 sm:text-lg'>
@@ -55,7 +49,7 @@ export default function Home() {
             imageUrl="https://images.pexels.com/photos/5973959/pexels-photo-5973959.jpeg?auto=compress&cs=tinysrgb&w=600x"
             direction="right" />
 
-<FeatureSection
+      <FeatureSection
             title="Branding"
             subtitle="Brand Your Landing Page"
             description="Your landing page should reflect the aesthetic, the design and the energy of the brand you've already created. With NextJs, you can customize the page's details to create a truly unique page that refines your look and feel. We make designing and launching easy, no matter what your product is."
@@ -87,10 +81,7 @@ export default function Home() {
         </div>
         </MaxWidthWrapper>
 
-        <Moda />
-
         <br/><br/><br/><br/><br/><br/>
-        <SpotifySearch />
         <Pricing />
           <div
             aria-hidden='true'

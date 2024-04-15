@@ -15,6 +15,14 @@ import {
 } from '@/lib/stripe'
 import { PLANS } from '@/config/stripe'
 
+const EpisodeSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  rss: z.string(),
+  image: z.string().optional(),
+  description: z.string().optional(),
+});
+
 export const appRouter = router({
   test: publicProcedure.query(async () => {
 
@@ -220,6 +228,16 @@ export const appRouter = router({
 
       return file
     }),
+  generatePodcastInsights: privateProcedure.
+  input(z.object({episode: EpisodeSchema})).
+  mutation(async ({ ctx, input }) => {
+    const generatePodcastInsights = () => {
+      }
+    const { userId } = ctx
+    if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' })
+    const insights = generatePodcastInsights()
+    return insights
+  }),
 })
 
 export type AppRouter = typeof appRouter

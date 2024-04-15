@@ -5,8 +5,9 @@ import Parser from 'rss-parser'
 
 require("dotenv").config();
 
-interface Episode{
-  name: string,
+export interface Episode{
+  id: string,
+  title: string,
   rss: string,
   image?: string,
   description?: string
@@ -15,7 +16,6 @@ interface Episode{
 async function fetchAndParseXML(rss: string) {
   const parser = new Parser();
   let jObj = parser.parseURL(rss);
-  console.log(jObj)
 
   return jObj
 }
@@ -27,19 +27,19 @@ export async function GET(
   const rss = request.nextUrl.searchParams.get("rss") ?? "";
 
   const xml = await fetchAndParseXML(rss)
-  let episodes: any
-
-  episodes = xml.items.map((item: any) => {
-    // Map each item to a podcast object
-    if (item.enclosure)
-    {
-    return {
-      title: item.title,
-      rss: item.enclosure.url ? item.enclosure.url: "",
-      image: item.itunes.image
-    }};
-
+  let episodes: Episode[] = []
+  let idCounter = 0
+  xml.items.forEach((item: any) => {
+    if (item.enclosure){
+      const episode:Episode = {
+        id: (++idCounter).toString(),
+        title: item.title,
+        rss: item.enclosure.url ?? "",
+        image: item.itunes.image
+      }
+      episodes.push(episode);
+    }
   });
 
-    return Response.json(episodes)
+  return Response.json(episodes)
 }

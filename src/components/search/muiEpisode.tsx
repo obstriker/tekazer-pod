@@ -8,6 +8,14 @@ import { useState, useEffect } from 'react';
 import { Avatar, Stack } from '@mui/material';
 import Image from 'next/image'
 
+export interface Episode{
+  id: string,
+  title: string,
+  rss: string,
+  image?: string,
+  description?: string
+}
+
 const renderList = (props: any, option: any) => (
     <AutocompleteOption {...props}   slotProps={{
         root: {
@@ -18,7 +26,8 @@ const renderList = (props: any, option: any) => (
         <Image
           loading="lazy"
           width={50}
-          src={option.image}
+          height={50}
+          src={option.image ?? "/favicon.ico"}
           className='rounded-full'
           alt=""
         />
@@ -46,30 +55,31 @@ const renderTagBox = (tags: any, getTagProps: any) => (
         ))
 )
 
-const MuiEpisode = ({rss}: any, {handleEpisodeSubmit}: any) => {
+const MuiEpisode = ({rss, handleEpisode}: {rss: any, handleEpisode: Function}) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const loading = open && options.length === 0;
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedEpisode, setSelectedEpisode] = useState([]);
+  const [selectedEpisode, setSelectedEpisode] = useState<Episode>({} as Episode);
   const [isEpisodeSelected, setIsEpisodeSelected] = useState(false);
-
+  
     const selectEpisode = (event: any, value: any) => {
-      if (Array.isArray(value))
-      {
-        if(Object.keys(value).length > 0)
-        {
-          setSelectedEpisode(value[0])
-          setIsEpisodeSelected(true)
-        }
-        else
-        {
-          setSelectedEpisode([])
-          setIsEpisodeSelected(false)
-        }
+      if (Array.isArray(value) && value.length > 0) {
+        const episode: Episode = {
+          id: value[0].id,
+          title: value[0].title,
+          rss: value[0].rss,
+          image: value[0].image,
+          description: value[0].description
+        };
+        setSelectedEpisode(episode);
+        setIsEpisodeSelected(true);
+        handleEpisode(episode);
+      } else {
+        setSelectedEpisode({} as Episode);
+        setIsEpisodeSelected(false);
       }
     }
-
     const getEpisodeResults = async (rss: any) => {
       try {
           const response = await fetch("/api/search/podcast/episode?rss=" + rss, {
