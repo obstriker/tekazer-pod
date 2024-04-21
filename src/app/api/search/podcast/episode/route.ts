@@ -2,16 +2,9 @@ import { NextRequest } from 'next/server'
 import axios from 'axios';
 import sha1 from 'sha1';
 import Parser from 'rss-parser'
+import { Episode } from '@/components/search/muiEpisode';
 
 require("dotenv").config();
-
-export interface Episode{
-  id: string,
-  title: string,
-  rss: string,
-  image?: string,
-  description?: string
-}
 
 async function fetchAndParseXML(rss: string) {
   const parser = new Parser();
@@ -28,13 +21,13 @@ export async function GET(
 
   const xml = await fetchAndParseXML(rss)
   let episodes: Episode[] = []
-  let idCounter = 0
+  let idCounter = xml.items.length
   xml.items.forEach((item: any) => {
     if (item.enclosure){
       const episode:Episode = {
-        id: (++idCounter).toString(),
+        id: (--idCounter).toString(),
         title: item.title,
-        rss: item.enclosure.url ?? "",
+        audioUrl: item.enclosure.url ?? "",
         image: item.itunes.image
       }
       episodes.push(episode);

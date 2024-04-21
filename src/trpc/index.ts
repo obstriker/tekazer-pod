@@ -8,17 +8,21 @@ import { TRPCError } from '@trpc/server'
 import { db } from '@/db'
 import { z } from 'zod'
 import { INFINITE_QUERY_LIMIT } from '@/config/infinite-query'
-import { absoluteUrl } from '@/lib/utils'
+import { deleteFile, downloadFile, fileExists } from '@/lib/serverUtils'
+import {absoluteUrl} from '@/lib/utils'
 import {
   getUserSubscriptionPlan,
   stripe,
 } from '@/lib/stripe'
 import { PLANS } from '@/config/stripe'
+import { v4 as uuid } from 'uuid';
+import { UploadStatus } from '@prisma/client'
+import { transcribe } from '@/lib/openai'
 
 const EpisodeSchema = z.object({
   id: z.string(),
   title: z.string(),
-  rss: z.string(),
+  audioUrl: z.string(),
   image: z.string().optional(),
   description: z.string().optional(),
 });
@@ -228,16 +232,60 @@ export const appRouter = router({
 
       return file
     }),
-  generatePodcastInsights: privateProcedure.
-  input(z.object({episode: EpisodeSchema})).
-  mutation(async ({ ctx, input }) => {
-    const generatePodcastInsights = () => {
+
+  generatePodcastInsights: privateProcedure
+    .input(z.object({ episode: EpisodeSchema }))
+    .mutation(async ({ ctx, input }) => {
+      const generatePodcastInsights = async () => {
+        console.log("generatePodcastInsights")
+
+        const localFilePath = `/tmp/${uuid()}.mp3`;
+
+        var fileData = {
+          name: input.episode.title,
+          key: input.episode.audioUrl,
+          url: input.episode.audioUrl,
+          userId: ctx.userId,
+          uploadStatus: UploadStatus.PENDING,
+        };
+
+        try {
+          await downloadFile(input.episode.audioUrl, localFilePath);
+
+          const file = await db.file.create({ data: fileData });
+
+          try {
+            // await transcribe(localFilePath);
+            if (await fileExists(localFilePath)) {
+              await db.file.update({
+                where: { id: file.id },
+                data: { uploadStatus: UploadStatus.SUCCESS }
+              });
+            }
+          } catch (err) {
+            await db.file.update({
+              where: { id: file.id },
+              data: { uploadStatus: UploadStatus.FAILED },
+            });
+            throw err;
+          } finally {
+            deleteFile(localFilePath);
+
+          }
+        } catch (err) {
+          console.error(`Failed to download file: ${err}`);
+          throw err;
+        }
+      };
+
+      const { userId } = ctx;
+      if (!userId) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-    const { userId } = ctx
-    if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' })
-    const insights = generatePodcastInsights()
-    return insights
-  }),
+
+      const insights = await generatePodcastInsights();
+      return insights;
+    }),
 })
 
 export type AppRouter = typeof appRouter

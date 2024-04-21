@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import MuiPodcast from './search/muiPodcast'
 import MuiEpisode, { Episode } from './search/muiEpisode'
 import { trpc } from '@/app/_trpc/client'
-import Episode from './search/muiEpisode';
 
 const PodPopup = () => {
     const [searchTerm, setSearchTerm] = useState("");

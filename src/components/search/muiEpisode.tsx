@@ -11,7 +11,7 @@ import Image from 'next/image'
 export interface Episode{
   id: string,
   title: string,
-  rss: string,
+  audioUrl: string,
   image?: string,
   description?: string
 }
@@ -68,7 +68,7 @@ const MuiEpisode = ({rss, handleEpisode}: {rss: any, handleEpisode: Function}) =
         const episode: Episode = {
           id: value[0].id,
           title: value[0].title,
-          rss: value[0].rss,
+          audioUrl: value[0].audioUrl,
           image: value[0].image,
           description: value[0].description
         };

@@ -20,7 +20,6 @@ export async function getUserSubscriptionPlan() {
       stripeCurrentPeriodEnd: null,
     }
   }
-  console.log(user)
   const dbUser = await db.user.findFirst({
     where: {
       id: user.id,
