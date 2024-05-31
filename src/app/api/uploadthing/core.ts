@@ -4,13 +4,16 @@ import {
   createUploadthing,
   type FileRouter,
 } from 'uploadthing/next'
-
+import { OpenAIWhisperAudio } from "langchain/document_loaders/fs/openai_whisper_audio";
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { PineconeStore } from 'langchain/vectorstores/pinecone'
+import { PineconeStore } from '@langchain/pinecone'
 import { getPineconeClient } from '@/lib/pinecone'
 import { getUserSubscriptionPlan } from '@/lib/stripe'
 import { PLANS } from '@/config/stripe'
+import { transcribe } from '@/lib/openai'
+import { Pinecone } from '@pinecone-database/pinecone';
+import { Document } from "@langchain/core/documents";
 
 const f = createUploadthing()
 
@@ -24,6 +27,37 @@ const middleware = async () => {
 
   return { subscriptionPlan, userId: user.id }
 }
+
+export const createAndStoreEmbeddings = async (docs: Document[], fileId: string) => {
+  // vectorize and index entire document
+    const pinecone = await getPineconeClient();
+    const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);
+    const embeddings = new OpenAIEmbeddings({
+      openAIApiKey: process.env.OPENAI_API_KEY,
+    })
+    // const loader = new OpenAIWhisperAudio(filePath);
+
+    // const docs = await loader.load();
+
+    // console.log(docs);
+    // var docs = 
+    //   [new Document({
+    //     pageContent: blob,
+    //     metadata: { source: fileId }
+    //   })]
+
+    const vectorStore = await PineconeStore.fromDocuments(
+      docs,
+      embeddings,
+      {
+        pineconeIndex,
+        namespace: fileId,
+      }
+    )
+
+    console.log("vectorStore", vectorStore)
+}
+
 
 const onUploadComplete = async ({
   metadata,
@@ -64,7 +98,7 @@ const onUploadComplete = async ({
     const loader = new PDFLoader(blob)
 
     const pageLevelDocs = await loader.load()
-
+    console.log(pageLevelDocs)
     const pagesAmt = pageLevelDocs.length
 
     const { subscriptionPlan } = metadata
@@ -94,7 +128,7 @@ const onUploadComplete = async ({
 
     // vectorize and index entire document
     const pinecone = await getPineconeClient()
-    const pineconeIndex = pinecone.Index('quill')
+    const pineconeIndex = pinecone.Index('pod3')
 
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY,

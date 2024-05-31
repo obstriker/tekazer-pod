@@ -20,6 +20,7 @@ import { useState } from 'react'
 
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import WaveSurferComponent from './wavesurfer'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/lib/utils'
@@ -89,6 +90,11 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
 
   return (
     <div className='w-full bg-white rounded-md shadow flex flex-col items-center'>
+      <WaveSurferComponent />
+      <div className='conent text-black'>
+        <p>Hello there</p>
+        <p>Here is the summary of the transcription</p>
+      </div>
       <div className='h-14 w-full border-b border-zinc-200 flex items-center justify-between px-2'>
         <div className='flex items-center gap-1.5'>
           <Button
