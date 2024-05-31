@@ -4,20 +4,21 @@ import {
   publicProcedure,
   router,
 } from './trpc'
-import { TRPCError } from '@trpc/server'
+import { TRPCError, createCallerFactory } from '@trpc/server'
 import { db } from '@/db'
 import { z } from 'zod'
 import { INFINITE_QUERY_LIMIT } from '@/config/infinite-query'
-import { deleteFile, downloadFile, fileExists } from '@/lib/serverUtils'
+import { cleanUpLocalFile, downloadFileAndSaveToDb, fileExists } from '@/lib/serverUtils'
 import {absoluteUrl} from '@/lib/utils'
 import {
   getUserSubscriptionPlan,
   stripe,
 } from '@/lib/stripe'
 import { PLANS } from '@/config/stripe'
-import { v4 as uuid } from 'uuid';
 import { UploadStatus } from '@prisma/client'
-import { transcribe } from '@/lib/openai'
+import { transcribe, transcribeDocs } from '@/lib/openai'
+import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
+import { createAndStoreEmbeddings} from '@/app/api/uploadthing/core'
 
 const EpisodeSchema = z.object({
   id: z.string(),
@@ -26,6 +27,57 @@ const EpisodeSchema = z.object({
   image: z.string().optional(),
   description: z.string().optional(),
 });
+
+
+const FileSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  fileUrl: z.string().optional(),
+  transcription: z.string().optional(),
+});
+
+const updateFile = async ({ ctx, input } : { ctx: any, input: any }) => {
+  const { userId } = ctx;
+  const { id, ...restOfInput } = input;
+
+  const updatedFile = await db.file.update({
+    where: {
+      id: id,
+      userId,
+    },
+    data: restOfInput,
+  });
+
+  return updatedFile;
+};
+
+
+const setFileUploadStatus = async ({ ctx, input } : { ctx: any, input: { key: string, status: UploadStatus } }) => {
+  const { userId } = ctx;
+  const { key, status } = input;
+
+  const file = await db.file.findFirst({
+    where: {
+      key: key,
+      userId,
+    },
+  });
+
+  if (!file) {
+    throw new TRPCError({ code: 'NOT_FOUND' });
+  }
+
+  await db.file.update({
+    where: {
+      id: file.id, // should update by file ID, not key
+    },
+    data: {
+      uploadStatus: status,
+    },
+  });
+
+  return { key, status };
+}
 
 export const appRouter = router({
   test: publicProcedure.query(async () => {
@@ -233,59 +285,98 @@ export const appRouter = router({
       return file
     }),
 
+  updateFile: privateProcedure
+  .input(FileSchema)
+  .mutation(async ({ ctx, input }) => {
+    return await updateFile({ctx, input})
+  }),
+
+  setFileUploadStatus: privateProcedure
+    .input(z.object({
+      key: z.string(),
+      status: z.nativeEnum(UploadStatus),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return await setFileUploadStatus({ctx, input})
+    }),
+
   generatePodcastInsights: privateProcedure
     .input(z.object({ episode: EpisodeSchema }))
     .mutation(async ({ ctx, input }) => {
-      const generatePodcastInsights = async () => {
-        console.log("generatePodcastInsights")
-
-        const localFilePath = `/tmp/${uuid()}.mp3`;
-
-        var fileData = {
-          name: input.episode.title,
-          key: input.episode.audioUrl,
-          url: input.episode.audioUrl,
-          userId: ctx.userId,
-          uploadStatus: UploadStatus.PENDING,
-        };
-
-        try {
-          await downloadFile(input.episode.audioUrl, localFilePath);
-
-          const file = await db.file.create({ data: fileData });
-
-          try {
-            // await transcribe(localFilePath);
-            if (await fileExists(localFilePath)) {
-              await db.file.update({
-                where: { id: file.id },
-                data: { uploadStatus: UploadStatus.SUCCESS }
-              });
-            }
-          } catch (err) {
-            await db.file.update({
-              where: { id: file.id },
-              data: { uploadStatus: UploadStatus.FAILED },
-            });
-            throw err;
-          } finally {
-            deleteFile(localFilePath);
-
-          }
-        } catch (err) {
-          console.error(`Failed to download file: ${err}`);
-          throw err;
-        }
-      };
-
       const { userId } = ctx;
       if (!userId) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
 
-      const insights = await generatePodcastInsights();
-      return insights;
+      const generatePodcastInsights = async () => {
+        const fileData = {
+          name: input.episode.title,
+          key: input.episode.audioUrl,
+          url: input.episode.audioUrl,
+          userId,
+          uploadStatus: UploadStatus.PENDING,
+          thumbnail: input.episode.image || "",
+        };
+        
+        var localFilePath = "";
+
+        //delete: test data
+        fileData.url = "http://localhost:8000/Downloads/espn.m4a"
+
+        //Remove all unnessesary loggings
+        //export as much code to external function to make this clean and readble code
+        try {
+          console.log(`Downloading file ${fileData.url}...`)
+          const { localFilePath, file } = await downloadFileAndSaveToDb(fileData);
+          console.log(`Downloaded file saved to ${localFilePath}`)
+          var transcription;
+
+          if (!fileExists(localFilePath)) {
+            console.log(`Failed to download file ${fileData.url}`)
+            setFileUploadStatus({ctx, input: {key: fileData.key, status: UploadStatus.FAILED}})
+            return false;
+          }
+          else {
+            console.log(`Successfully downloaded file ${fileData.url}`)
+            setFileUploadStatus({ctx, input: {key: fileData.key, status: UploadStatus.SUCCESS}})
+            updateFile({ctx, input:file})
+
+            console.log(`Transcribing file ${localFilePath}...`)
+            transcription = await transcribeDocs(localFilePath);
+            console.log(`Transcription result: ${JSON.stringify(transcription, null, 2)}`)
+            await createAndStoreEmbeddings(transcription, file.id)
+            
+            console.log(`Transcribed file ${localFilePath}`)
+            const transcriptionText = Array.from(transcription).map(doc => doc.pageContent).join(' ')
+
+            console.log(`Transcription result: ${JSON.stringify(transcriptionText, null, 2)}`)
+            console.log(`Updating file ${file.id} with transcription...`)
+            await db.file.update({
+              where: {
+                id: file.id,
+              },
+              data: {
+                transcription: transcriptionText,
+              },
+            });
+            console.log(`Updated file ${file.id} with transcription`)
+
+          }
+
+          return transcription;
+
+        } catch (err) {
+          console.error(`Error processing file ${fileData.url}:`, err);
+          setFileUploadStatus({ctx, input: {key: fileData.key, status: UploadStatus.FAILED}})
+          throw err;
+        } finally {
+          await cleanUpLocalFile(localFilePath);
+        }
+      };
+
+      return await generatePodcastInsights();
     }),
+
 })
 
 export type AppRouter = typeof appRouter

@@ -28,6 +28,7 @@ const PodPopup = () => {
     const handleEpisode = (ep: Episode) =>
     {
         setSelectedEpisode(ep)
+        console.log("Selected episode:", selectedEpisode);
     }
 
     const handleEpisodeSubmit = () => {

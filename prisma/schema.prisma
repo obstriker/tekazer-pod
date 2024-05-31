@@ -40,11 +40,24 @@ model File {
   url      String
   key      String
   messages Message[]
+  insights Insight[]
+  transcription String @db.Text() @default("")
+  thumbnail String? @default("")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   User      User?    @relation(fields: [userId], references: [id])
   userId    String?
+}
+
+model Insight {
+  id        String   @id @default(cuid())
+  fileId    String
+  content String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  File File @relation(fields: [fileId], references: [id])
 }
 
 model Message {
